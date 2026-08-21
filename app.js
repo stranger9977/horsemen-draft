@@ -65,9 +65,13 @@ function consensusScore(p) {
   }
   return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
+function anyHumanRanks() {
+  return MANAGERS.some(m => S.ranks[m] && Object.keys(S.ranks[m]).length);
+}
 function orderedPlayers() {
   const arr = [...PLAYERS];
   if (S.sortMode === "consensus") arr.sort((a, b) => consensusScore(a) - consensusScore(b));
+  else if (S.sortMode === "adp") arr.sort((a, b) => (a.adp ?? 999) - (b.adp ?? 999));
   return arr;
 }
 
@@ -120,7 +124,8 @@ function rowHtml(p, ctx) {
     }
     if (p.rk) tags += `<span class="tag rook">R</span>`;
   }
-  const rank = S.sortMode === "consensus" ? Math.round(consensusScore(p)) : p.id;
+  const rank = S.sortMode === "consensus" ? Math.round(consensusScore(p))
+    : S.sortMode === "adp" ? (p.adp ? Math.round(p.adp) : "—") : p.id;
   const sub = `${p.t} · Bye ${p.b ?? "?"} · ${p.p}${p.pr} · ${p.ppg} ppg`;
   const adpTxt = p.adp ? `ADP ${p.adp}` : "ADP —";
   const pk = d ? `<div class="adp">Pick ${d.pick}${d.mine ? " · YOU" : ""}</div>` : `<div class="adp">${adpTxt}</div>`;
@@ -148,10 +153,15 @@ function viewBoard() {
   if (S.posFilter !== "ALL") list = list.filter(p => p.p === S.posFilter);
   if (q) list = list.filter(p => norm(p.n).includes(q));
   const chips = POS_ORDER.map(x => `<button class="chip ${S.posFilter === x ? "on" : ""}" data-pos="${x}">${x}</button>`).join("");
-  const seg = `<div class="seg"><button class="${S.sortMode === "consensus" ? "on" : ""}" data-sort="consensus">Consensus</button><button class="${S.sortMode === "model" ? "on" : ""}" data-sort="model">Model VORP</button></div>`;
+  const seg = `<div class="seg">
+    <button class="${S.sortMode === "consensus" ? "on" : ""}" data-sort="consensus">Consensus</button>
+    <button class="${S.sortMode === "model" ? "on" : ""}" data-sort="model">Model VORP</button>
+    <button class="${S.sortMode === "adp" ? "on" : ""}" data-sort="adp">2QB ADP</button></div>`;
+  const hint = (S.sortMode === "consensus" && !anyHumanRanks())
+    ? `<div class="note" style="margin:6px 4px 0">Consensus = model only so far — add Nick/Fox/AJ ranks in <b>More → Our ranks</b> and they'll vote here.</div>` : "";
   return `<div class="chips">${chips}</div>
     <input class="search" id="search" placeholder="Search player…" value="${S.search || ""}">
-    ${seg}
+    ${seg}${hint}
     ${list.map(p => rowHtml(p, "board")).join("")}`;
 }
 
