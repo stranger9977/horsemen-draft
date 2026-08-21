@@ -19,6 +19,8 @@ let S = {
   teamName: "Million Dollar Men",
   sortMode: "consensus",
   onboarded: false,
+  rankTs: {},            // per-manager: newest ranks timestamp this phone holds
+  lastShared: {},        // per-manager: when this phone last produced a share link
   tab: "rank", posFilter: "ALL", search: "", moreView: "info",
 };
 try {
@@ -317,19 +319,52 @@ function wizardCommit(early) {
   if (!S.posRanks[w.who]) S.posRanks[w.who] = {};
   S.posRanks[w.who][w.pos] = final;
   S.wizard = null;
-  flash(`${w.pos} ranks saved for ${w.who}`);
+  S.rankTs[w.who] = Date.now();
+  flash(`${w.pos} saved — Share when you're done`);
   save();
 }
 
 function shareBlob(who) {
-  return JSON.stringify({ who, posRanks: S.posRanks[who] || {}, ranks: S.ranks[who] || {} });
+  return JSON.stringify({ who, ts: S.rankTs[who] || Date.now(), posRanks: S.posRanks[who] || {}, ranks: S.ranks[who] || {} });
 }
 function importBlob(o) {
   if (!o || !o.who || !MANAGERS.includes(o.who)) throw new Error("bad blob");
+  const ts = o.ts || Date.now();
+  if ((S.rankTs[o.who] || 0) > ts) return o.who + " (kept newer local copy)";
   S.posRanks[o.who] = Object.assign(S.posRanks[o.who] || {}, o.posRanks || {});
   S.ranks[o.who] = Object.assign(S.ranks[o.who] || {}, o.ranks || {});
+  S.rankTs[o.who] = ts;
   save();
   return o.who;
+}
+
+// published ranks.json in the repo = read-only "server"; newest ts per manager wins
+async function pullPublished() {
+  try {
+    const r = await fetch("ranks.json", { cache: "no-store" });
+    if (!r.ok) return;
+    const d = await r.json();
+    let changed = false;
+    for (const m of MANAGERS) {
+      const e = d.managers && d.managers[m];
+      if (e && (e.ts || 0) > (S.rankTs[m] || 0)) {
+        S.posRanks[m] = e.posRanks || {};
+        S.ranks[m] = e.ranks || {};
+        S.rankTs[m] = e.ts;
+        changed = true;
+      }
+    }
+    if (changed) { save(); flash("Pulled the latest crew ranks ✓"); render(); }
+  } catch (e) {}
+}
+function publishBlob() {
+  const managers = {};
+  for (const m of MANAGERS) {
+    if ((S.posRanks[m] && Object.keys(S.posRanks[m]).length) || (S.ranks[m] && Object.keys(S.ranks[m]).length)) {
+      managers[m] = { ts: S.rankTs[m] || Date.now(), posRanks: S.posRanks[m] || {}, ranks: S.ranks[m] || {} };
+    }
+  }
+  return JSON.stringify({ updated: new Date().toISOString(), managers }, null, 1);
 }
 function shareUrl(who) {
   const b64 = btoa(unescape(encodeURIComponent(shareBlob(who)))).replace(/\+/g, "-").replace(/\//g, "_");
@@ -384,7 +419,9 @@ function viewRanks() {
     return `<div class="card"><h2>${who}'s ${pos} board</h2>${rows}</div>`;
   }).join("");
 
-  return `${seg}${otherGame}
+  const unshared = (S.rankTs[who] || 0) > (S.lastShared[who] || 0)
+    ? `<div class="card" style="border-color:var(--gold)"><div class="note"><b style="color:var(--gold)">⬆️ ${who} has unshared ranks.</b> Hit Share below and text the link to the chat so they count on everyone's board.</div></div>` : "";
+  return `${seg}${otherGame}${unshared}
     <div class="note" style="margin:8px 4px"><b>${who}</b>: play the duel game per position — head-to-head picks, a few minutes each. Progress saves automatically; leave and come back anytime. When you're done, hit <b>Share</b> and text the link to the chat; tapping it auto-imports on the others' phones.</div>
     <div class="posgrid">${grid}</div>
     <button class="btn mine" id="sharelink">📤 Share ${who}'s ranks (link)</button>
@@ -397,7 +434,11 @@ function viewSettings() {
   return `<div class="card"><h2>Settings</h2>
     <div class="slotrow"><div>Draft slot</div><input type="number" min="1" max="10" id="slotin" value="${S.slot}" style="width:4em;margin-left:auto"></div>
     <div class="slotrow"><div>My CBS team name contains</div><input id="teamin" value="${S.teamName}" style="margin-left:auto;background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:6px;width:11em"></div>
-    <div class="note">Snake, ${TEAMS} teams, ${ROUNDS} rounds. Your picks: ${myPickNumbers().join(", ")}</div></div>`;
+    <div class="note">Snake, ${TEAMS} teams, ${ROUNDS} rounds. Your picks: ${myPickNumbers().join(", ")}</div></div>
+    <div class="card"><h2>Publish crew ranks (Nick only)</h2>
+    <div class="note">Once you've imported everyone's links, copy the publish blob and push it to the repo as <b>ranks.json</b> (run <b>./publish.sh</b> in ~/horsemen-draft, or ask Claude). After that, every phone auto-loads the full crew ranks on open — no more importing.</div>
+    <button class="btn other" id="publishcopy">Copy publish blob</button>
+    <button class="btn other" id="pullnow">Pull latest published ranks now</button></div>`;
 }
 
 function viewInfo() {
@@ -541,14 +582,16 @@ function render() {
     const [pos, iStr, dStr] = b.dataset.mv.split(":");
     const i = Number(iStr), d = Number(dStr), list = S.posRanks[S.who][pos];
     const j = i + d;
-    if (j >= 0 && j < list.length) { [list[i], list[j]] = [list[j], list[i]]; save(); render(); }
+    if (j >= 0 && j < list.length) { [list[i], list[j]] = [list[j], list[i]]; S.rankTs[S.who] = Date.now(); save(); render(); }
   }));
   const sh = main.querySelector("#sharelink");
   if (sh) sh.addEventListener("click", async () => {
     const url = shareUrl(S.who);
-    if (navigator.share) { try { await navigator.share({ title: `${S.who}'s Lodge ranks`, url }); return; } catch (e) {} }
+    S.lastShared[S.who] = Date.now(); save();
+    if (navigator.share) { try { await navigator.share({ title: `${S.who}'s Lodge ranks`, url }); render(); return; } catch (e) {} }
     try { await navigator.clipboard.writeText(url); flash("Link copied — text it to the chat"); }
     catch (e) { main.querySelector("#ranktext").value = url; flash("Copy the link from the box below"); }
+    render();
   });
   const im = main.querySelector("#importranks");
   if (im) im.addEventListener("click", () => {
@@ -560,6 +603,13 @@ function render() {
       flash(`Imported ${who}'s ranks`); render();
     } catch (e) { flash("Couldn't read that — paste the full link or blob"); }
   });
+  const pc = main.querySelector("#publishcopy");
+  if (pc) pc.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(publishBlob()); flash("Publish blob copied"); }
+    catch (e) { flash("Clipboard blocked — try on your Mac"); }
+  });
+  const pn = main.querySelector("#pullnow");
+  if (pn) pn.addEventListener("click", () => pullPublished());
   const slotin = main.querySelector("#slotin");
   if (slotin) slotin.addEventListener("change", e => { S.slot = Math.min(10, Math.max(1, Number(e.target.value) || 6)); save(); render(); });
   const teamin = main.querySelector("#teamin");
@@ -583,3 +633,4 @@ document.getElementById("tabs").addEventListener("click", e => {
 })();
 
 render();
+pullPublished();
