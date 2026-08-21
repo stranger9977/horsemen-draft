@@ -81,6 +81,20 @@ select,input[type=number]{background:var(--card);border:1px solid var(--line);bo
 .flash{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1a1204;font-weight:800;padding:8px 18px;border-radius:999px;z-index:60;font-size:.85rem;box-shadow:0 4px 18px #0008;opacity:0;transition:opacity .2s}
 .flash.show{opacity:1}
 h4.sect{margin:14px 4px 2px;font-size:.78rem;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+.duel{display:flex;gap:10px;margin-top:12px}
+.duelcard{flex:1;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:20px 10px;text-align:center;cursor:pointer;transition:border-color .1s}
+.duelcard:active{border-color:var(--gold);background:var(--card2)}
+.duelcard .dn{font-weight:800;font-size:1.05rem;line-height:1.2}
+.duelcard .ds{font-size:.75rem;color:var(--dim);margin-top:6px;line-height:1.5}
+.vs{align-self:center;font-weight:900;color:var(--faint);font-size:.9rem}
+.pbar{height:6px;background:var(--card2);border-radius:99px;margin-top:10px;overflow:hidden}
+.pbar div{height:100%;background:var(--accent);border-radius:99px}
+.posgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.posbtn{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;text-align:left}
+.posbtn .t{font-weight:800}
+.posbtn .s{font-size:.72rem;color:var(--dim);margin-top:2px}
+.posbtn.done{border-color:var(--green)}
+.arrows button{background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--text);width:2em;height:2em;font-size:.9rem;cursor:pointer;margin-left:4px}
 </style>
 </head>
 <body>
@@ -94,7 +108,7 @@ h4.sect{margin:14px 4px 2px;font-size:.78rem;color:var(--faint);text-transform:u
 <nav class="tabs" id="tabs"></nav>
 <div class="sheet" id="sheet"></div>
 <div class="flash" id="flash"></div>
-<script src="data.js?v=2"></script>
-<script src="app.js?v=2"></script>
+<script src="data.js?v=3"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

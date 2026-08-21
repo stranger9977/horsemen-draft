@@ -11,7 +11,9 @@ const byId = new Map(PLAYERS.map(p => [p.id, p]));
 // ---------- state ----------
 let S = {
   events: [],            // [{id, mine}] in pick order
-  ranks: { Nick: {}, Fox: {}, AJ: {} },
+  ranks: { Nick: {}, Fox: {}, AJ: {} },       // manual overall overrides (legacy/import)
+  posRanks: { Nick: {}, Fox: {}, AJ: {} },    // {QB:[ids best->worst], ...} from the duel game
+  wizard: null,          // resumable duel state {who,pos,sorted,queue,cur,lo,hi,hist}
   who: "Nick",
   slot: 6,
   teamName: "Million Dollar Men",
@@ -57,16 +59,31 @@ function leagueAdp(p) {
 function adpSd(p) { return (p.p === "DST" || p.p === "K") ? 12 : Math.max(p.sd || 8, 6); }
 function pAvail(p, atPick) { return 1 - normcdf((atPick - leagueAdp(p)) / adpSd(p)); }
 
+// model pos-rank r at position P -> that player's overall model rank (id)
+const posIdByRank = {};
+for (const p of PLAYERS) { (posIdByRank[p.p] ||= [])[p.pr - 1] = p.id; }
+
+function managerVote(m, p) {
+  const manual = S.ranks[m] && S.ranks[m][p.id];
+  if (manual != null && manual !== "") return Number(manual);
+  const list = S.posRanks[m] && S.posRanks[m][p.p];
+  if (list) {
+    const i = list.indexOf(p.id);
+    if (i >= 0) return posIdByRank[p.p][i] ?? p.id;  // their posrank i+1 inherits model's slot at that posrank
+  }
+  return null;
+}
 function consensusScore(p) {
   const vals = [p.id]; // model VORP rank (id == vorp_rank)
   for (const m of MANAGERS) {
-    const r = S.ranks[m] && S.ranks[m][p.id];
-    if (r != null && r !== "") vals.push(Number(r));
+    const v = managerVote(m, p);
+    if (v != null) vals.push(v);
   }
   return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
 function anyHumanRanks() {
-  return MANAGERS.some(m => S.ranks[m] && Object.keys(S.ranks[m]).length);
+  return MANAGERS.some(m => (S.ranks[m] && Object.keys(S.ranks[m]).length) ||
+    (S.posRanks[m] && Object.keys(S.posRanks[m]).length));
 }
 function orderedPlayers() {
   const arr = [...PLAYERS];
@@ -251,22 +268,111 @@ function viewMore() {
   return seg + viewInfo();
 }
 
+// ---------- ranking duel game ----------
+const WIZ_N = { QB: 20, RB: 30, WR: 30, TE: 15, K: 10, DST: 12 };
+
+function wizardStart(pos) {
+  const cands = PLAYERS.filter(p => p.p === pos).slice(0, WIZ_N[pos]).map(p => p.id);
+  S.wizard = { who: S.who, pos, sorted: [cands[0]], queue: cands.slice(1), cur: null, lo: 0, hi: 0, hist: [] };
+  wizardEnsure(); save();
+}
+function wizardSnap() {
+  const w = S.wizard;
+  w.hist.push({ sorted: [...w.sorted], queue: [...w.queue], cur: w.cur, lo: w.lo, hi: w.hi });
+  if (w.hist.length > 60) w.hist.shift();
+}
+function wizardEnsure() {
+  const w = S.wizard;
+  if (!w) return;
+  if (w.cur == null) {
+    if (!w.queue.length) { wizardCommit(); return; }
+    w.cur = w.queue.shift(); w.lo = 0; w.hi = w.sorted.length;
+  }
+}
+function wizardChoose(curWins) {
+  const w = S.wizard;
+  wizardSnap();
+  const mid = (w.lo + w.hi) >> 1;
+  if (curWins) w.hi = mid; else w.lo = mid + 1;
+  if (w.lo >= w.hi) { w.sorted.splice(w.lo, 0, w.cur); w.cur = null; }
+  wizardEnsure(); save();
+}
+function wizardCommit(early) {
+  const w = S.wizard;
+  if (!w) return;
+  let final = [...w.sorted];
+  if (early) { if (w.cur != null) final.push(w.cur); final = final.concat(w.queue); }
+  if (!S.posRanks[w.who]) S.posRanks[w.who] = {};
+  S.posRanks[w.who][w.pos] = final;
+  S.wizard = null;
+  flash(`${w.pos} ranks saved for ${w.who}`);
+  save();
+}
+
+function shareBlob(who) {
+  return JSON.stringify({ who, posRanks: S.posRanks[who] || {}, ranks: S.ranks[who] || {} });
+}
+function importBlob(o) {
+  if (!o || !o.who || !MANAGERS.includes(o.who)) throw new Error("bad blob");
+  S.posRanks[o.who] = Object.assign(S.posRanks[o.who] || {}, o.posRanks || {});
+  S.ranks[o.who] = Object.assign(S.ranks[o.who] || {}, o.ranks || {});
+  save();
+  return o.who;
+}
+function shareUrl(who) {
+  const b64 = btoa(unescape(encodeURIComponent(shareBlob(who)))).replace(/\+/g, "-").replace(/\//g, "_");
+  return location.origin + location.pathname + "#r=" + b64;
+}
+
+function viewDuel() {
+  const w = S.wizard;
+  const mid = (w.lo + w.hi) >> 1;
+  const a = byId.get(w.cur), b = byId.get(w.sorted[mid]);
+  if (!a || !b) { wizardCommit(true); return viewRanks(); }
+  const placed = w.sorted.length, total = WIZ_N[w.pos];
+  const card = p => `<div class="duelcard" data-duel="${p.id}">
+      <div class="pbadge p${p.p}" style="margin:0 auto 8px">${p.p}${p.pr}</div>
+      <div class="dn">${p.n}</div>
+      <div class="ds">${p.t} · Bye ${p.b ?? "?"}<br>${p.ppg} ppg · ADP ${p.adp ?? "—"}</div></div>`;
+  return `<div class="card"><h2>${S.who}'s ${w.pos} duels</h2>
+    <div class="note">Tap the player you'd rather have <b>this season, in this league</b>.</div>
+    <div class="duel">${card(a)}<div class="vs">VS</div>${card(b)}</div>
+    <div class="pbar"><div style="width:${Math.round(placed / total * 100)}%"></div></div>
+    <div class="note">${placed}/${total} placed</div>
+    <button class="btn other" data-wundo>↩︎ Undo last answer</button>
+    <button class="btn ghost" data-wfinish>Finish now (rest stay in model order)</button></div>`;
+}
+
 function viewRanks() {
   const who = S.who;
   const seg = `<div class="seg">${MANAGERS.map(m => `<button class="${who === m ? "on" : ""}" data-who="${m}">${m}</button>`).join("")}</div>`;
-  const list = orderedPlayers().slice(0, 160).map(p => {
-    const v = (S.ranks[who] && S.ranks[who][p.id]) ?? "";
-    return `<div class="row" style="cursor:default">
-      <div class="rk">${p.id}</div><div class="pbadge p${p.p}">${p.p}</div>
-      <div class="pinfo"><div class="pname">${p.n}</div><div class="psub">${p.t} · model #${p.id} · ADP ${p.adp ?? "—"}</div></div>
-      <input class="rankinput" inputmode="numeric" data-rank="${p.id}" value="${v}" placeholder="—"></div>`;
+  if (S.wizard && S.wizard.who === who) return seg + viewDuel();
+  if (S.wizard && S.wizard.who !== who) wizardCommit(true); // switched manager mid-game: bank progress
+
+  const grid = Object.keys(WIZ_N).map(pos => {
+    const done = S.posRanks[who] && S.posRanks[who][pos];
+    return `<div class="posbtn ${done ? "done" : ""}" data-posstart="${pos}">
+      <div class="t">${pos} ${done ? "✓" : ""}</div>
+      <div class="s">${done ? `${done.length} ranked — tap to redo` : `rank top ${WIZ_N[pos]} · ~${Math.ceil(WIZ_N[pos] * Math.log2(WIZ_N[pos]) / 2)} taps`}</div></div>`;
   }).join("");
+
+  const reviews = Object.keys(WIZ_N).filter(pos => S.posRanks[who] && S.posRanks[who][pos]).map(pos => {
+    const rows = S.posRanks[who][pos].map((id, i) => {
+      const p = byId.get(id); if (!p) return "";
+      return `<div class="slotrow"><div class="slotlabel">${pos}${i + 1}</div>
+        <div style="flex:1"><b>${p.n}</b> <span class="psub">${p.t}${p.pr !== i + 1 ? ` · model ${pos}${p.pr}` : ""}</span></div>
+        <div class="arrows">${i > 0 ? `<button data-mv="${pos}:${i}:-1">▲</button>` : ""}${i < S.posRanks[who][pos].length - 1 ? `<button data-mv="${pos}:${i}:1">▼</button>` : ""}</div></div>`;
+    }).join("");
+    return `<div class="card"><h2>${who}'s ${pos} board</h2>${rows}</div>`;
+  }).join("");
+
   return `${seg}
-    <div class="note" style="margin:8px 4px">Enter <b>${who}'s</b> overall ranks (any subset — blanks just don't vote). Consensus = average of model rank + every rank that's filled in. Export → text it to the group chat → they Import on their phone.</div>
-    <button class="btn other" id="exportranks">Copy ${who}'s ranks (share)</button>
-    <button class="btn other" id="importranks">Import pasted ranks</button>
-    <textarea id="ranktext" placeholder='Paste a shared ranks blob here, then hit Import'></textarea>
-    ${list}`;
+    <div class="note" style="margin:8px 4px"><b>${who}</b>: play the duel game per position — head-to-head picks, a few minutes each. Your position order feeds the team consensus on the Board. When you're done, hit <b>Share</b> and text the link to the chat; tapping it auto-imports on the others' phones.</div>
+    <div class="posgrid">${grid}</div>
+    <button class="btn mine" id="sharelink">📤 Share ${who}'s ranks (link)</button>
+    <button class="btn other" id="importranks">Import from pasted link/blob</button>
+    <textarea id="ranktext" placeholder="Paste a shared link or blob here, then tap Import"></textarea>
+    ${reviews}`;
 }
 
 function viewSettings() {
@@ -388,26 +494,42 @@ function render() {
     else { resetbtn.dataset.armed = "1"; resetbtn.textContent = "Tap again to confirm reset"; }
   });
 
-  main.querySelectorAll("[data-rank]").forEach(inp => inp.addEventListener("change", e => {
-    const id = Number(inp.dataset.rank), v = e.target.value.trim();
-    if (!S.ranks[S.who]) S.ranks[S.who] = {};
-    if (v === "") delete S.ranks[S.who][id]; else S.ranks[S.who][id] = Number(v);
-    save();
+  // ranking duel game
+  main.querySelectorAll("[data-posstart]").forEach(b => b.addEventListener("click", () => { wizardStart(b.dataset.posstart); render(); }));
+  main.querySelectorAll("[data-duel]").forEach(c => c.addEventListener("click", () => {
+    if (!S.wizard) return;
+    wizardChoose(Number(c.dataset.duel) === S.wizard.cur);
+    render();
   }));
-  const ex = main.querySelector("#exportranks");
-  if (ex) ex.addEventListener("click", async () => {
-    const blob = JSON.stringify({ who: S.who, ranks: S.ranks[S.who] || {} });
-    try { await navigator.clipboard.writeText(blob); flash("Copied — text it to the chat"); }
-    catch (e) { main.querySelector("#ranktext").value = blob; flash("Copy from the box below"); }
+  const wu = main.querySelector("[data-wundo]");
+  if (wu) wu.addEventListener("click", () => {
+    const w = S.wizard;
+    if (w && w.hist.length) { Object.assign(w, w.hist.pop()); save(); render(); }
+  });
+  const wf = main.querySelector("[data-wfinish]");
+  if (wf) wf.addEventListener("click", () => { wizardCommit(true); render(); });
+  main.querySelectorAll("[data-mv]").forEach(b => b.addEventListener("click", () => {
+    const [pos, iStr, dStr] = b.dataset.mv.split(":");
+    const i = Number(iStr), d = Number(dStr), list = S.posRanks[S.who][pos];
+    const j = i + d;
+    if (j >= 0 && j < list.length) { [list[i], list[j]] = [list[j], list[i]]; save(); render(); }
+  }));
+  const sh = main.querySelector("#sharelink");
+  if (sh) sh.addEventListener("click", async () => {
+    const url = shareUrl(S.who);
+    if (navigator.share) { try { await navigator.share({ title: `${S.who}'s Lodge ranks`, url }); return; } catch (e) {} }
+    try { await navigator.clipboard.writeText(url); flash("Link copied — text it to the chat"); }
+    catch (e) { main.querySelector("#ranktext").value = url; flash("Copy the link from the box below"); }
   });
   const im = main.querySelector("#importranks");
   if (im) im.addEventListener("click", () => {
     try {
-      const o = JSON.parse(main.querySelector("#ranktext").value);
-      if (!o.who || !MANAGERS.includes(o.who)) throw 0;
-      S.ranks[o.who] = o.ranks || {};
-      save(); flash(`Imported ${Object.keys(S.ranks[o.who]).length} ranks for ${o.who}`); render();
-    } catch (e) { flash("Couldn't read that blob"); }
+      let txt = main.querySelector("#ranktext").value.trim();
+      const m = txt.match(/#r=([A-Za-z0-9_\-]+)/);
+      if (m) txt = decodeURIComponent(escape(atob(m[1].replace(/-/g, "+").replace(/_/g, "/"))));
+      const who = importBlob(JSON.parse(txt));
+      flash(`Imported ${who}'s ranks`); render();
+    } catch (e) { flash("Couldn't read that — paste the full link or blob"); }
   });
   const slotin = main.querySelector("#slotin");
   if (slotin) slotin.addEventListener("change", e => { S.slot = Math.min(10, Math.max(1, Number(e.target.value) || 6)); save(); render(); });
@@ -419,5 +541,16 @@ document.getElementById("tabs").addEventListener("click", e => {
   const b = e.target.closest("[data-tab]");
   if (b) { S.tab = b.dataset.tab; save(); render(); }
 });
+
+// auto-import ranks arriving via a shared link (#r=...)
+(function () {
+  const m = location.hash.match(/#r=([A-Za-z0-9_\-]+)/);
+  if (!m) return;
+  try {
+    const who = importBlob(JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, "+").replace(/_/g, "/"))))));
+    history.replaceState(null, "", location.pathname);
+    setTimeout(() => flash(`Imported ${who}'s ranks ✓`), 300);
+  } catch (e) {}
+})();
 
 render();
