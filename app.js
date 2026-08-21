@@ -18,7 +18,8 @@ let S = {
   slot: 6,
   teamName: "Million Dollar Men",
   sortMode: "consensus",
-  tab: "board", posFilter: "ALL", search: "", moreView: "info",
+  onboarded: false,
+  tab: "rank", posFilter: "ALL", search: "", moreView: "info",
 };
 try {
   const raw = localStorage.getItem("lodge26");
@@ -156,7 +157,7 @@ function rowHtml(p, ctx) {
 
 // ---------- tabs ----------
 const TABS = [
-  ["board", "📋", "Board"], ["best", "⚡", "Best"], ["team", "🏆", "Team"], ["sync", "🔄", "Sync"], ["more", "⚙️", "More"],
+  ["rank", "🥇", "Rank"], ["board", "📋", "Board"], ["best", "⚡", "Best"], ["team", "🏆", "Team"], ["sync", "🔄", "Sync"], ["more", "⚙️", "More"],
 ];
 function renderTabs() {
   document.getElementById("tabs").innerHTML = TABS.map(([k, ic, l]) =>
@@ -175,7 +176,7 @@ function viewBoard() {
     <button class="${S.sortMode === "model" ? "on" : ""}" data-sort="model">Model VORP</button>
     <button class="${S.sortMode === "adp" ? "on" : ""}" data-sort="adp">2QB ADP</button></div>`;
   const hint = (S.sortMode === "consensus" && !anyHumanRanks())
-    ? `<div class="note" style="margin:6px 4px 0">Consensus = model only so far — add Nick/Fox/AJ ranks in <b>More → Our ranks</b> and they'll vote here.</div>` : "";
+    ? `<div class="note" style="margin:6px 4px 0">Consensus = model only so far — play the duel game in the <b>Rank</b> tab and everyone's picks will vote here.</div>` : "";
   return `<div class="chips">${chips}</div>
     <input class="search" id="search" placeholder="Search player…" value="${S.search || ""}">
     ${seg}${hint}
@@ -259,21 +260,32 @@ function viewSync() {
 }
 
 function viewMore() {
+  if (S.moreView === "ranks") S.moreView = "info"; // ranks moved to its own tab
   const seg = `<div class="seg">
     <button class="${S.moreView === "info" ? "on" : ""}" data-more="info">League intel</button>
-    <button class="${S.moreView === "ranks" ? "on" : ""}" data-more="ranks">Our ranks</button>
     <button class="${S.moreView === "settings" ? "on" : ""}" data-more="settings">Settings</button></div>`;
-  if (S.moreView === "ranks") return seg + viewRanks();
   if (S.moreView === "settings") return seg + viewSettings();
   return seg + viewInfo();
+}
+
+function viewOnboard() {
+  return `<div class="card" style="margin-top:18vh;text-align:center">
+    <div style="font-size:2.2rem">🏈</div>
+    <h3 style="font-size:1.15rem;margin:8px 0 4px">Horsemen Lodge draft board</h3>
+    <div class="note" style="margin-bottom:14px">First things first — play the ranking game. Quick head-to-head picks, position by position. Your answers + Fox's + AJ's + the model = our board.<br><br>Who's holding this phone?</div>
+    ${MANAGERS.map(m => `<button class="btn mine" data-obwho="${m}">${m}</button>`).join("")}
+    <button class="btn ghost" data-obskip>Skip — just show me the board</button></div>`;
 }
 
 // ---------- ranking duel game ----------
 const WIZ_N = { QB: 20, RB: 30, WR: 30, TE: 15, K: 10, DST: 12 };
 
 function wizardStart(pos) {
+  if (S.wizard && S.wizard.who === S.who && S.wizard.pos === pos) return; // resume in place
+  if (S.wizard) wizardCommit(true); // bank someone else's / another position's progress
   const cands = PLAYERS.filter(p => p.p === pos).slice(0, WIZ_N[pos]).map(p => p.id);
   S.wizard = { who: S.who, pos, sorted: [cands[0]], queue: cands.slice(1), cur: null, lo: 0, hi: 0, hist: [] };
+  S.duelOpen = true;
   wizardEnsure(); save();
 }
 function wizardSnap() {
@@ -340,20 +352,26 @@ function viewDuel() {
     <div class="pbar"><div style="width:${Math.round(placed / total * 100)}%"></div></div>
     <div class="note">${placed}/${total} placed</div>
     <button class="btn other" data-wundo>↩︎ Undo last answer</button>
+    <button class="btn ghost" data-wback>⏸ Pause — back to positions (progress saved)</button>
     <button class="btn ghost" data-wfinish>Finish now (rest stay in model order)</button></div>`;
 }
 
 function viewRanks() {
   const who = S.who;
   const seg = `<div class="seg">${MANAGERS.map(m => `<button class="${who === m ? "on" : ""}" data-who="${m}">${m}</button>`).join("")}</div>`;
-  if (S.wizard && S.wizard.who === who) return seg + viewDuel();
-  if (S.wizard && S.wizard.who !== who) wizardCommit(true); // switched manager mid-game: bank progress
+  if (S.wizard && S.wizard.who === who && S.duelOpen !== false) return seg + viewDuel();
+  const otherGame = S.wizard && S.wizard.who !== who
+    ? `<div class="note" style="margin:6px 4px">⏸ ${S.wizard.who} has a ${S.wizard.pos} game in progress — it resumes on ${S.wizard.who}'s tab.</div>` : "";
 
   const grid = Object.keys(WIZ_N).map(pos => {
     const done = S.posRanks[who] && S.posRanks[who][pos];
+    const inProg = S.wizard && S.wizard.who === who && S.wizard.pos === pos;
+    const sub = inProg ? `in progress (${S.wizard.sorted.length}/${WIZ_N[pos]}) — tap to resume`
+      : done ? `${done.length} ranked — tap to redo`
+      : `rank top ${WIZ_N[pos]} · ~${Math.ceil(WIZ_N[pos] * Math.log2(WIZ_N[pos]) / 2)} taps`;
     return `<div class="posbtn ${done ? "done" : ""}" data-posstart="${pos}">
       <div class="t">${pos} ${done ? "✓" : ""}</div>
-      <div class="s">${done ? `${done.length} ranked — tap to redo` : `rank top ${WIZ_N[pos]} · ~${Math.ceil(WIZ_N[pos] * Math.log2(WIZ_N[pos]) / 2)} taps`}</div></div>`;
+      <div class="s">${sub}</div></div>`;
   }).join("");
 
   const reviews = Object.keys(WIZ_N).filter(pos => S.posRanks[who] && S.posRanks[who][pos]).map(pos => {
@@ -366,8 +384,8 @@ function viewRanks() {
     return `<div class="card"><h2>${who}'s ${pos} board</h2>${rows}</div>`;
   }).join("");
 
-  return `${seg}
-    <div class="note" style="margin:8px 4px"><b>${who}</b>: play the duel game per position — head-to-head picks, a few minutes each. Your position order feeds the team consensus on the Board. When you're done, hit <b>Share</b> and text the link to the chat; tapping it auto-imports on the others' phones.</div>
+  return `${seg}${otherGame}
+    <div class="note" style="margin:8px 4px"><b>${who}</b>: play the duel game per position — head-to-head picks, a few minutes each. Progress saves automatically; leave and come back anytime. When you're done, hit <b>Share</b> and text the link to the chat; tapping it auto-imports on the others' phones.</div>
     <div class="posgrid">${grid}</div>
     <button class="btn mine" id="sharelink">📤 Share ${who}'s ranks (link)</button>
     <button class="btn other" id="importranks">Import from pasted link/blob</button>
@@ -455,7 +473,16 @@ function parseCbs(text) {
 function render() {
   renderHeader(); renderTabs();
   const main = document.getElementById("main");
-  main.innerHTML = S.tab === "board" ? viewBoard() : S.tab === "best" ? viewBest() : S.tab === "team" ? viewTeam() : S.tab === "sync" ? viewSync() : viewMore();
+  if (!S.onboarded) {
+    main.innerHTML = viewOnboard();
+    main.querySelectorAll("[data-obwho]").forEach(b => b.addEventListener("click", () => {
+      S.who = b.dataset.obwho; S.onboarded = true; S.tab = "rank"; save(); render();
+    }));
+    const sk = main.querySelector("[data-obskip]");
+    if (sk) sk.addEventListener("click", () => { S.onboarded = true; S.tab = "board"; save(); render(); });
+    return;
+  }
+  main.innerHTML = S.tab === "rank" ? viewRanks() : S.tab === "board" ? viewBoard() : S.tab === "best" ? viewBest() : S.tab === "team" ? viewTeam() : S.tab === "sync" ? viewSync() : viewMore();
 
   main.querySelectorAll(".row[data-id]").forEach(r => r.addEventListener("click", () => openSheet(Number(r.dataset.id))));
   main.querySelectorAll(".chip[data-pos]").forEach(c => c.addEventListener("click", () => { S.posFilter = c.dataset.pos; save(); render(); }));
@@ -495,7 +522,9 @@ function render() {
   });
 
   // ranking duel game
-  main.querySelectorAll("[data-posstart]").forEach(b => b.addEventListener("click", () => { wizardStart(b.dataset.posstart); render(); }));
+  main.querySelectorAll("[data-posstart]").forEach(b => b.addEventListener("click", () => { wizardStart(b.dataset.posstart); S.duelOpen = true; save(); render(); }));
+  const wb = main.querySelector("[data-wback]");
+  if (wb) wb.addEventListener("click", () => { S.duelOpen = false; save(); render(); });
   main.querySelectorAll("[data-duel]").forEach(c => c.addEventListener("click", () => {
     if (!S.wizard) return;
     wizardChoose(Number(c.dataset.duel) === S.wizard.cur);
