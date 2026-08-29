@@ -1,0 +1,192 @@
+overall|team_idx|player pos team
+teams: 0=OUTLAWS 1=Captain Fantasy 2=The Steagles 3=Loosy's Lickbags 4=Pool Boys 5=Philipsburg-Osceola Notorious/Legends 6=too GOOD AT this 7=The Million Dollar Men 8=McGee 9=Wild Boys
+1|0|CeeDee Lamb WR DAL
+2|1|Christian McCaffrey RB SF
+3|2|Tyreek Hill WR MIA
+4|3|Amon-Ra St. Brown WR DET
+5|4|Jalen Hurts QB PHI
+6|5|Breece Hall RB NYJ
+7|6|Bijan Robinson RB ATL
+8|7|Justin Jefferson WR MIN
+9|8|Ja'Marr Chase WR CIN
+10|9|Jahmyr Gibbs RB DET
+11|9|Puka Nacua WR LAR
+12|8|Jonathan Taylor RB IND
+13|7|Saquon Barkley RB PHI
+14|6|A.J. Brown WR NE
+15|5|Patrick Mahomes QB KC
+16|4|Josh Allen QB BUF
+17|3|Garrett Wilson WR NYJ
+18|2|Derrick Henry RB BAL
+19|1|Kyren Williams RB LAR
+20|0|Travis Etienne RB NO
+21|0|Cooper Kupp WR SEA
+22|1|Joe Burrow QB CIN
+23|2|Isiah Pacheco RB DET
+24|3|Lamar Jackson QB BAL
+25|4|Davante Adams WR LAR
+26|5|Marvin Harrison Jr. WR ARI
+27|6|De'Von Achane RB MIA
+28|7|Drake London WR ATL
+29|8|Chris Olave WR NO
+30|9|C.J. Stroud QB HOU
+31|9|Jordan Love QB GB
+32|8|Anthony Richardson QB IND
+33|7|Kyler Murray QB MIN
+34|6|Dak Prescott QB DAL
+35|5|Sam LaPorta TE DET
+36|4|Travis Kelce TE KC
+37|3|Josh Jacobs RB GB
+38|2|Mike Evans WR SF
+39|1|Mark Andrews TE BAL
+40|0|Brandon Aiyuk WR SF
+41|0|Rachaad White RB WAS
+42|1|Trey McBride TE ARI
+43|2|Joe Mixon RB HOU
+44|3|Kenneth Walker III RB KC
+45|4|Deebo Samuel WR SF
+46|5|DK Metcalf WR PIT
+47|6|James Cook RB BUF
+48|7|Malik Nabers WR NYG
+49|8|Alvin Kamara RB NO
+50|9|Jaylen Waddle WR DEN
+51|9|Nico Collins WR HOU
+52|8|Stefon Diggs WR WAS
+53|7|Najee Harris RB NYG
+54|6|Rashee Rice WR KC
+55|5|DeVonta Smith WR PHI
+56|4|Javonte Williams RB DAL
+57|3|Jayden Daniels QB WAS
+58|2|DJ Moore WR BUF
+59|1|Trevor Lawrence QB JAC
+60|0|Tua Tagovailoa QB ATL
+61|0|Aaron Jones RB MIN
+62|1|Amari Cooper WR LV
+63|2|Kyle Pitts TE ATL
+64|3|Michael Pittman WR PIT
+65|4|Zamir White RB NO
+66|5|D'Andre Swift RB CHI
+67|6|Jared Goff QB DET
+68|7|Dalton Kincaid TE BUF
+69|8|David Montgomery RB HOU
+70|9|Tony Pollard RB TEN
+71|9|James Conner RB ARI
+72|8|Rhamondre Stevenson RB NE
+73|7|Caleb Williams QB CHI
+74|6|Evan Engram TE DEN
+75|5|Terry McLaurin WR WAS
+76|4|Calvin Ridley WR TEN
+77|3|Raheem Mostert RB LV
+78|2|Tee Higgins WR CIN
+79|1|Xavier Worthy WR KC
+80|0|Devin Singletary RB NYG
+81|0|George Kittle TE SF
+82|1|Jets DST NYJ
+83|2|Brian Robinson Jr. RB ATL
+84|3|George Pickens WR DAL
+85|4|Chase Brown RB CIN
+86|5|David Njoku TE LAC
+87|6|Ravens DST BAL
+88|7|Jake Ferguson TE DAL
+89|8|49ers DST SF
+90|9|Cowboys DST DAL
+91|9|Texans DST HOU
+92|8|Brock Purdy QB SF
+93|7|Zack Moss RB CIN
+94|6|Jaylen Warren RB PIT
+95|5|Jerome Ford RB WAS
+96|4|Diontae Johnson WR CLE
+97|3|Chiefs DST KC
+98|2|Jonathon Brooks RB CAR
+99|1|Austin Ekeler RB WAS
+100|0|Christian Kirk WR SF
+101|0|Nick Chubb RB HOU
+102|1|Mike Williams WR LAC
+103|2|Kirk Cousins QB LV
+104|3|Browns DST CLE
+105|4|Chuba Hubbard RB CAR
+106|5|Steelers DST PIT
+107|6|Tank Dell WR HOU
+108|7|Zay Flowers WR BAL
+109|8|Chris Godwin WR TB
+110|9|Rome Odunze WR CHI
+111|9|Gus Edwards RB LAC
+112|8|Bills DST BUF
+113|7|Rico Dowdle RB PIT
+114|6|Eagles DST PHI
+115|5|J.K. Dobbins RB DEN
+116|4|Dalton Schultz TE HOU
+117|3|Tyjae Spears RB TEN
+118|2|Justin Herbert QB LAC
+119|1|Keenan Allen WR IND
+120|0|Pat Freiermuth TE PIT
+121|0|Aaron Rodgers QB PIT
+122|1|Blake Corum RB LAR
+123|2|Brock Bowers TE LV
+124|3|Cole Kmet TE CHI
+125|4|Saints DST NO
+126|5|Matthew Stafford QB LAR
+127|6|Jaxon Smith-Njigba WR SEA
+128|7|Buccaneers DST TB
+129|8|Dallas Goedert TE PHI
+130|9|T.J. Hockenson TE MIN
+131|9|Luke Musgrave TE GB
+132|8|Christian Watson WR GB
+133|7|Bears DST CHI
+134|6|DeAndre Hopkins WR BAL
+135|5|Younghoe Koo K NYJ
+136|4|Chargers DST LAC
+137|3|Khalil Shakir WR BUF
+138|2|Dolphins DST MIA
+139|1|Trey Benson RB ARI
+140|0|Geno Smith QB NYJ
+141|0|Lions DST DET
+142|1|Courtland Sutton WR DEN
+143|2|Falcons DST ATL
+144|3|Zach Ertz TE WAS
+145|4|Josh Palmer WR BUF
+146|5|Jaleel McLaughlin RB DEN
+147|6|Harrison Butker K KC
+148|7|MarShawn Lloyd RB GB
+149|8|Ty Chandler RB NO
+150|9|Ezekiel Elliott RB
+151|9|Brian Thomas Jr. WR JAC
+152|8|Tyler Conklin TE DET
+153|7|Justin Tucker K BAL
+154|6|Romeo Doubs WR NE
+155|5|Curtis Samuel WR BUF
+156|4|Jordan Mason RB MIN
+157|3|Brandon Aubrey K DAL
+158|2|Jayden Reed WR GB
+159|1|Packers DST GB
+160|0|Bengals DST CIN
+161|0|Panthers DST CAR
+162|1|Evan McPherson K CIN
+163|2|Jake Elliott K PHI
+164|3|Tyler Allgeier RB ARI
+165|4|Will Levis QB TEN
+166|5|Colts DST IND
+167|6|Hunter Henry TE NE
+168|7|Bucky Irving RB TB
+169|8|Jake Moody K WAS
+170|9|Cade Otton TE TB
+171|9|Ka'imi Fairbairn K HOU
+172|8|Tyler Bass K BUF
+173|7|Jaylen Wright RB MIA
+174|6|Greg Zuerlein K NYJ
+175|5|Jameson Williams WR DET
+176|4|Jason Sanders K NYJ
+177|3|Cameron Dicker K LAC
+178|2|Keon Coleman WR BUF
+179|1|Cairo Santos K CHI
+180|0|Mike Badgley K BUF
+181|0|Brandon McManus K GB
+182|1|Raiders DST LV
+183|2|Jason Myers K SEA
+184|3|Vikings DST MIN
+185|4|Chris Boswell K PIT
+186|5|Blake Grupe K IND
+187|6|Baker Mayfield QB TB
+188|7|Matt Gay K LV
+189|8|Marquise Brown WR PHI
+190|9|Daniel Carlson K NO

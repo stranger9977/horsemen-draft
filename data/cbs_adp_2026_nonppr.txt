@@ -1,0 +1,209 @@
+rank|pos_rank|player|trend|avg_pick|hi_lo|pct_drafted
+1|1|Jahmyr Gibbs RB • DET *||1.22|1/2|100.0
+2|2|Bijan Robinson RB • ATL *||2.06|1/4|100.0
+3|3|Jonathan Taylor RB • IND *||3.73|2/7|100.0
+4|1|Ja'Marr Chase WR • CIN *||6.65|3/16|100.0
+5|4|Derrick Henry RB • BAL *||6.73|3/14|100.0
+6|5|James Cook RB • BUF *|+2|7.63|4/14|100.0
+7|6|Christian McCaffrey RB • SF *|-1|7.72|3/15|100.0
+8|2|Puka Nacua WR • LAR *|-1|8.05|4/16|100.0
+9|3|Jaxon Smith-Njigba WR • SEA *||9.57|5/17|100.0
+10|7|De'Von Achane RB • MIA *||11.30|5/22|100.0
+11|8|Saquon Barkley RB • PHI *|+1|11.87|6/18|100.0
+12|9|Chase Brown RB • CIN *|+2|13.22|7/21|100.0
+13|4|Amon-Ra St. Brown WR • DET *|+2|13.33|7/21|100.0
+14|1|Josh Allen QB • BUF *|-1|13.34|2/26|97.8
+15|10|Ashton Jeanty RB • LV *|-4|17.66|7/40|100.0
+16|11|Kenneth Walker III RB • KC *|+1|17.80|11/30|100.0
+17|12|Kyren Williams RB • LAR *|-1|18.88|12/30|100.0
+18|5|CeeDee Lamb WR • DAL *|+1|20.64|11/36|100.0
+19|13|Omarion Hampton RB • LAC *|+1|21.28|12/37|100.0
+20|6|Drake London WR • ATL *|-2|22.63|14/34|100.0
+21|7|Justin Jefferson WR • MIN *|+1|22.89|12/43|100.0
+22|14|Josh Jacobs RB • GB *|-1|23.37|14/39|100.0
+23|8|George Pickens WR • DAL *||24.58|15/36|100.0
+24|9|A.J. Brown WR • NE *||25.34|16/38|100.0
+25|10|Rashee Rice WR • KC *||27.65|17/40|100.0
+26|15|D'Andre Swift RB • CHI *|+3|28.63|17/47|100.0
+27|11|Nico Collins WR • HOU *|+3|28.81|19/44|100.0
+28|16|Javonte Williams RB • DAL *|-1|29.50|18/47|100.0
+29|17|Cam Skattebo RB • NYG *|-3|29.93|16/51|100.0
+30|18|Jeremiyah Love RB • ARI *|-2|33.35|19/55|100.0
+31|2|Lamar Jackson QB • BAL *||33.70|10/58|97.8
+32|1|Brock Bowers TE • LV *|+1|34.13|20/56|99.8
+33|12|Chris Olave WR • NO *|+1|34.49|25/49|100.0
+34|19|Travis Etienne RB • NO *|+4|36.77|22/57|100.0
+35|13|Malik Nabers WR • NYG *|+2|37.05|25/54|100.0
+36|2|Trey McBride TE • ARI *||37.80|23/59|100.0
+37|20|Bucky Irving RB • TB *|-2|37.80|22/65|100.0
+38|14|Tee Higgins WR • CIN *|+1|40.15|28/53|100.0
+39|21|Breece Hall RB • NYJ *|-7|40.50|21/68|100.0
+40|15|Zay Flowers WR • BAL *||41.21|29/58|100.0
+41|16|DeVonta Smith WR • PHI *|+7|46.52|31/69|100.0
+42|3|Joe Burrow QB • CIN *||46.85|16/73|97.5
+43|17|Emeka Egbuka WR • TB *||46.95|32/67|100.0
+44|22|David Montgomery RB • HOU *|+3|47.22|31/68|100.0
+45|4|Drake Maye QB • NE *|-4|47.63|13/72|97.8
+46|23|Bhayshul Tuten RB • JAC *|-1|48.70|30/72|100.0
+47|3|Colston Loveland TE • CHI *|+2|49.57|33/72|99.8
+48|18|Tetairoa McMillan WR • CAR *|+3|49.63|36/67|100.0
+49|24|Quinshon Judkins RB • CLE *|-5|50.02|32/75|100.0
+50|5|Dak Prescott QB • DAL *|-4|51.69|15/94|97.8
+51|19|Ladd McConkey WR • LAC *|-1|51.70|38/74|100.0
+52|25|Jadarian Price RB • SEA *||52.56|34/76|100.0
+53|20|Jameson Williams WR • DET *||55.80|38/75|100.0
+54|21|Terry McLaurin WR • WAS *|+1|58.83|41/81|100.0
+55|22|Davante Adams WR • LAR *|+3|59.43|36/84|100.0
+56|6|Jayden Daniels QB • WAS *|-2|60.38|26/99|97.8
+57|23|Jaylen Waddle WR • DEN *|+3|61.02|40/98|99.8
+58|7|Jalen Hurts QB • PHI *|-2|62.34|22/99|97.8
+59|24|Garrett Wilson WR • NYJ *|+3|63.12|44/93|100.0
+60|25|DJ Moore WR • BUF *|+6|65.10|38/97|99.8
+61|26|TreVeyon Henderson RB • NE *|-2|65.82|43/91|100.0
+62|8|Trevor Lawrence QB • JAC *|+5|68.10|27/110|97.8
+63|27|J.K. Dobbins RB • DEN *|+16|69.06|45/98|99.5
+64|4|Tyler Warren TE • IND *|+1|69.31|47/115|98.3
+65|26|Rome Odunze WR • CHI *|-8|69.51|47/99|100.0
+66|9|Caleb Williams QB • CHI *|-5|70.24|30/105|97.8
+67|27|Christian Watson WR • GB *|+4|72.20|49/101|100.0
+68|28|Alec Pierce WR • IND *|-4|72.47|49/106|99.0
+69|5|Dallas Goedert TE • PHI *|-6|72.58|46/113|97.5
+70|6|Tucker Kraft TE • GB *||72.88|47/104|98.0
+71|29|Mike Evans WR • SF *|-3|73.45|48/99|99.3
+72|28|Tony Pollard RB • TEN *||75.33|53/101|99.8
+73|30|Luther Burden III WR • CHI *||75.48|54/110|99.0
+74|29|Rico Dowdle RB • PIT *|+2|77.04|51/104|99.3
+75|30|Rhamondre Stevenson RB • NE *|+10|78.20|52/106|99.0
+76|1|Broncos DST • DEN *|-2|79.17|36/132|96.1
+77|31|Jaylen Warren RB • PIT *||79.29|54/112|99.5
+78|10|Brock Purdy QB • SF *|+6|80.33|31/129|96.8
+79|31|Marvin Harrison Jr. WR • ARI *|+4|81.79|59/113|99.5
+80|7|Sam LaPorta TE • DET *|-5|82.25|56/128|97.3
+81|32|Jonathon Brooks RB • CAR *|+9|82.36|56/114|98.5
+82|11|Matthew Stafford QB • LAR *|-13|83.59|27/129|97.1
+83|12|Justin Herbert QB • LAC *|-1|84.68|44/122|97.1
+84|8|Kyle Pitts TE • ATL *|-3|87.22|59/134|95.8
+85|9|Harold Fannin Jr. TE • CLE *|+1|88.96|61/131|95.1
+86|13|Patrick Mahomes QB • KC *|-6|89.34|35/136|96.8
+87|33|Jordan Mason RB • MIN *|+2|89.70|65/119|98.8
+88|32|Brian Thomas Jr. WR • JAC *|-1|90.61|63/121|98.3
+89|10|George Kittle TE • SF *|+10|91.30|55/133|96.1
+90|33|Parker Washington WR • JAC *|+6|91.32|63/127|97.8
+91|34|RJ Harvey RB • DEN *|-13|91.61|57/121|98.0
+92|34|Courtland Sutton WR • DEN *||91.84|64/119|99.0
+93|2|Texans DST • HOU *|-5|93.27|59/131|96.1
+94|35|DK Metcalf WR • PIT *||94.35|68/131|98.5
+95|1|Brandon Aubrey K • DAL *|+2|96.57|56/136|97.8
+96|35|Jacory Croskey-Merritt RB • WAS *|-1|97.01|74/130|97.1
+97|14|Jaxson Dart QB • NYG *|-6|99.72|47/140|95.1
+98|15|Jared Goff QB • DET *||100.08|46/140|94.1
+99|36|Chuba Hubbard RB • CAR *|-6|101.54|73/129|97.1
+100|37|Blake Corum RB • LAR *|+5|102.35|74/136|95.8
+101|3|Rams DST • LAR *|-1|102.60|63/144|95.6
+102|36|Quentin Johnston WR • LAC *|-1|103.66|79/135|96.3
+103|11|Isaiah Likely TE • NYG *||103.97|70/146|94.8
+104|4|Seahawks DST • SEA *|-2|104.11|68/144|95.8
+105|37|Carnell Tate WR • TEN *|+1|104.23|71/148|89.4
+106|38|Kyle Monangai RB • CHI *|-2|105.37|78/140|94.6
+107|2|Jason Myers K • SEA *||105.56|62/152|97.8
+108|38|Chris Godwin WR • TB *||107.04|78/147|93.6
+109|5|Vikings DST • MIN *|+10|109.12|62/157|94.8
+110|12|Mark Andrews TE • BAL *|-1|109.36|69/154|91.2
+111|39|Jordan Addison WR • MIN *|+1|111.74|80/148|92.6
+112|13|Travis Kelce TE • KC *|-1|111.85|70/152|91.2
+113|16|Bo Nix QB • DEN *|-3|112.12|56/153|90.4
+114|39|Kenneth Gainwell RB • TB *|+1|113.42|85/144|91.9
+115|14|Dalton Kincaid TE • BUF *|+2|115.01|70/156|88.9
+116|40|Michael Wilson WR • ARI *|-2|115.20|82/154|92.1
+117|3|Ka'imi Fairbairn K • HOU *|-4|115.97|72/158|97.5
+118|17|Baker Mayfield QB • TB *|+2|118.12|69/161|85.3
+119|40|Aaron Jones RB • MIN *|-1|118.66|90/152|90.7
+120|6|Eagles DST • PHI *|-4|121.42|79/166|95.1
+121|41|Rachaad White RB • WAS *||122.02|96/155|90.2
+122|41|De'Zhaun Stribling WR • SF *|+16|122.20|78/166|85.3
+123|42|Chris Rodriguez Jr. RB • JAC *|-1|123.57|97/156|85.5
+124|42|Stefon Diggs WR • WAS *|-1|125.59|88/172|82.6
+125|43|Mike Washington Jr. RB • LV *|+66|127.44|76/185|61.9
+126|4|Cameron Dicker K • LAC *||127.88|83/172|97.8
+127|18|Kyler Murray QB • MIN *|+8|129.22|82/166|81.3
+128|19|Sam Darnold QB • SEA *|+6|130.78|77/177|64.9
+129|43|Jayden Reed WR • GB *|+23|131.68|95/169|76.9
+130|15|Jake Ferguson TE • DAL *|+9|134.00|85/167|75.9
+131|44|Woody Marks RB • HOU *|+14|134.12|97/163|77.6
+132|44|KC Concepcion WR • CLE *|+9|134.26|96/173|74.9
+133|45|Deebo Samuel WR • SF *|+3|134.26|95/175|79.1
+134|20|Jordan Love QB • GB *|-4|134.65|86/174|66.6
+135|46|Josh Downs WR • IND *|-8|135.52|93/176|70.3
+136|47|Jakobi Meyers WR • JAC *|-7|135.71|99/175|72.7
+137|45|Zach Charbonnet RB • SEA *|-12|135.73|100/170|76.4
+138|48|Matthew Golden WR • GB *|-7|135.99|88/184|61.4
+139|49|Rashid Shaheed WR • SEA *|+8|136.41|98/177|75.2
+140|7|Steelers DST • PIT *|+2|136.46|92/175|86.0
+141|50|Romeo Doubs WR • NE *|+26|136.50|91/180|64.9
+142|51|Michael Pittman WR • PIT *|-5|136.58|92/178|64.4
+143|46|Tyrone Tracy Jr. RB • NYG *|-10|136.63|106/166|76.2
+144|21|Daniel Jones QB • IND *||136.94|91/176|56.3
+145|8|Patriots DST • NE *|+5|137.51|90/177|87.2
+146|52|Xavier Worthy WR • KC *|-18|137.52|98/179|65.6
+147|53|Makai Lemon WR • PHI *|+7|138.48|91/185|62.2
+148|54|Wan'Dale Robinson WR • TEN *|-24|138.54|95/182|61.4
+149|47|MarShawn Lloyd RB • GB *|+39|141.11|95/192|42.5
+150|5|Jake Bates K • DET *|+18|141.51|99/185|93.6
+151|22|Tyler Shough QB • NO *|-8|141.66|94/177|59.7
+152|48|Isiah Pacheco RB • DET *|-12|141.89|101/178|68.8
+153|23|C.J. Stroud QB • HOU *|+4|143.15|86/183|46.2
+154|9|Chargers DST • LAC *|-1|143.24|101/177|75.7
+155|49|Tyler Allgeier RB • ARI *|+5|143.76|99/181|53.6
+156|6|Cam Little K • JAC *|+10|143.83|100/184|89.4
+157|50|Kaelon Black RB • SF *|+4|144.70|111/178|63.6
+158|10|Ravens DST • BAL *|+5|144.76|98/182|77.9
+159|16|Brenton Strange TE • JAC *|+3|144.92|117/180|65.4
+160|24|Malik Willis QB • MIA *|-9|145.06|98/180|46.4
+161|11|Lions DST • DET *|-5|145.70|102/188|64.6
+162|7|Blake Grupe K • IND *|+7|145.73|100/186|80.1
+163|51|Jonah Coleman RB • DEN *||147.41|94/202|32.2
+164|55|Ja'Kobi Lane WR • BAL *|+16|147.86|104/189|59.2
+165|17|Juwan Johnson TE • NO *|+7|147.90|118/183|58.2
+166|52|Braelon Allen RB • NYJ *|+9|149.38|111/182|55.0
+167|53|Keaton Mitchell RB • LAC *|-12|149.57|108/199|28.0
+168|56|Jalen Coker WR • CAR *|+5|149.61|119/178|58.0
+169|57|Jordyn Tyson WR • NO *|-37|149.72|92/194|33.2
+170|54|Tank Bigsby RB • PHI *|-5|149.76|113/186|56.8
+171|18|Hunter Henry TE • NE *|-12|149.84|109/189|59.2
+172|8|Harrison Butker K • KC *|+10|150.38|105/190|58.2
+173|12|Jaguars DST • JAC *|+16|150.80|111/189|68.8
+174|13|Falcons DST • ATL *|+3|151.53|100/194|36.9
+175|14|Saints DST • NO *|+11|151.79|102/192|45.5
+176|9|Nick Folk K • ATL *|-12|152.04|99/193|57.5
+177|25|Fernando Mendoza QB • LV *|-6|152.27|84/191|20.1
+178|10|Harrison Mevis K • LAR *|+1|152.38|105/192|82.1
+179|15|Cowboys DST • DAL *||152.84|100/206|23.8
+180|58|Tank Dell WR • HOU *|-32|153.15|111/188|29.0
+181|59|Calvin Ridley WR • TEN *|+9|153.51|116/186|48.4
+182|55|Alvin Kamara RB • NO *|-33|153.64|111/189|45.0
+183|56|Tyjae Spears RB • TEN *|+13|154.86|111/188|36.9
+184|11|Evan McPherson K • CIN *||155.51|110/193|46.2
+185|12|Cairo Santos K • CHI *|-7|155.62|114/194|71.7
+186|60|Rashod Bateman WR • BAL *|-40|155.72|103/193|40.3
+187|16|Bears DST • CHI *|+5|156.70|105/208|29.0
+188|17|Bills DST • BUF *|+6|157.56|116/198|36.4
+189|57|Brian Robinson Jr. RB • ATL *|-6|157.77|116/191|40.5
+190|13|Eddy Pineiro K • SF *|-20|157.98|113/196|55.5
+191|18|Chiefs DST • KC *|+8|158.26|115/191|38.6
+192|19|Browns DST • CLE *|+5|158.48|112/196|36.9
+193|19|AJ Barner TE • SEA *|-6|158.51|106/196|29.7
+194|61|Jalen Nailor WR • LV *||158.99|117/194|20.4
+195|20|Packers DST • GB *|+7|159.08|111/202|31.2
+196|14|Chase McLaughlin K • TB *|-1|159.30|114/201|54.5
+197|20|Dalton Schultz TE • HOU *|+1|160.05|122/194|36.1
+198|21|Kenyon Sadiq TE • NYJ *|-24|160.48|114/202|30.2
+199|58|Dylan Sampson RB • CLE *|+4|160.75|124/199|26.5
+200|15|Wil Lutz K • DEN *|+1|160.80|116/201|35.1
+201|16|Will Reichard K • MIN *|+3|160.96|114/202|51.6
+202|62|Keenan Allen WR • IND *||161.56|128/200|22.9
+203|17|Tyler Loop K • BAL *|-10|162.47|114/196|56.3
+204|63|Cooper Kupp WR • SEA *|+3|163.00|98/201|20.1
+205|59|Jordan James RB • SF *|-20|163.12|123/192|32.9
+206|64|Tre Tucker WR • LV *|+2|163.55|111/198|23.6
+207|65|Denzel Boston WR • CLE *|-7|164.01|128/191|30.7
+208|66|Jauan Jennings WR • MIN *|-27|165.40|133/196|30.7

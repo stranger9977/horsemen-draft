@@ -1,5 +1,5 @@
 /* Horsemen Lodge draft app — static, state in localStorage. */
-const TEAMS = 10, ROUNDS = 19, TOTAL = TEAMS * ROUNDS;
+const TEAMS = 10, ROUNDS = 16, TOTAL = TEAMS * ROUNDS;   // 2026: CBS says 16 rounds — the draft is exactly the 16-man lineup, no stash rounds
 const NEEDS = { QB: 2, RB: 4, WR: 4, TE: 2, K: 2, DST: 2 };   // drafted lineup (counted weekly for Total Points)
 const IR_SLOTS = 3;
 const DEMAND = { QB: 20, RB: 40, WR: 40, TE: 20, K: 20, DST: 20 };
@@ -15,7 +15,7 @@ let S = {
   posRanks: { Nick: {}, Fox: {}, AJ: {} },    // {QB:[ids best->worst], ...} from the duel game
   wizard: null,          // resumable duel state {who,pos,sorted,queue,cur,lo,hi,hist}
   who: "Nick",
-  slot: 6,
+  slot: 3,
   teamName: "Million Dollar Men",
   sortMode: "consensus",
   onboarded: false,
@@ -27,6 +27,7 @@ try {
   const raw = localStorage.getItem("lodge26");
   if (raw) S = Object.assign(S, JSON.parse(raw));
 } catch (e) {}
+if (!S.slotFix26) { S.slot = 3; S.slotFix26 = true; }  // 8/23 draft-order call: MDM picks 3rd
 function save() { try { localStorage.setItem("lodge26", JSON.stringify(S)); } catch (e) {} }
 
 // ---------- helpers ----------
@@ -53,13 +54,12 @@ function myPickNumbers() {
 function currentPick() { return S.events.length + 1; }
 function roundOf(pick) { return Math.ceil(pick / TEAMS); }
 
-// league-tuned expected pick (this league drafts DST/K far earlier than market)
+// adp in the data is already Lodge-tuned: CBS non-PPR order, timed by this
+// room's own 2023-25 positional curves (incl. the early-QB / R7-DST / R12-K habits)
 function leagueAdp(p) {
-  if (p.p === "DST") return p.pr <= 2 ? 62 + 8 * p.pr : p.pr <= 11 ? 88 + 3.2 * (p.pr - 3) : p.pr <= 16 ? 130 + 2.5 * (p.pr - 12) : 158 + 4 * (p.pr - 17);
-  if (p.p === "K") return p.pr <= 1 ? 133 : p.pr <= 4 ? 143 + 4 * (p.pr - 2) : 156 + 2.6 * (p.pr - 5);
   return p.adp || 250;
 }
-function adpSd(p) { return (p.p === "DST" || p.p === "K") ? 12 : Math.max(p.sd || 8, 6); }
+function adpSd(p) { return (p.p === "DST" || p.p === "K") ? Math.max(p.sd || 10, 8) : Math.max(p.sd || 8, 6); }
 function pAvail(p, atPick) { return 1 - normcdf((atPick - leagueAdp(p)) / adpSd(p)); }
 
 // model pos-rank r at position P -> that player's overall model rank (id)
@@ -176,7 +176,7 @@ function viewBoard() {
   const seg = `<div class="seg">
     <button class="${S.sortMode === "consensus" ? "on" : ""}" data-sort="consensus">Consensus</button>
     <button class="${S.sortMode === "model" ? "on" : ""}" data-sort="model">Model VORP</button>
-    <button class="${S.sortMode === "adp" ? "on" : ""}" data-sort="adp">2QB ADP</button></div>`;
+    <button class="${S.sortMode === "adp" ? "on" : ""}" data-sort="adp">Lodge ADP</button></div>`;
   const hint = (S.sortMode === "consensus" && !anyHumanRanks())
     ? `<div class="note" style="margin:6px 4px 0">Consensus = model only so far — play the duel game in the <b>Rank</b> tab and everyone's picks will vote here.</div>` : "";
   return `<div class="chips">${chips}</div>
@@ -448,21 +448,25 @@ function viewInfo() {
   <b>Receptions are tiered, not PPR:</b> 3 catches = 0 pts, 4–5 = 3, 6–7 = 4, 8–9 = 5… Volume alone doesn't pay until it clusters. Big games matter: +3 at 100 rush/rec yds, +3 at 300 pass yds, and QBs get tiered completion bonuses (20+ completions = 3–7 pts).<br><br>
   <b>Passing TDs are 4 pts</b> and INTs −2, so volume passers with completions ≈ rushing QBs here.<br><br>
   <b>DSTs are huge:</b> points-against + yards-allowed tiers mean a good defensive day is 15–25 pts — as much as a WR1. <b>Kickers land ~8–9 ppg</b> with distance bonuses.</div></div>
-  <div class="card"><h2>How the Lodge actually drafts (2025)</h2><div class="note">
-  <b>QBs:</b> 5 gone by pick 23, ~14 by round 8.<br>
-  <b>DST window:</b> first DST pick 69 (Packers, R7); 11 DSTs gone by pick 114 (R12). The run hits rounds 10–12 — be a starter of it, not a victim.<br>
-  <b>Kickers:</b> first at pick 135 (R14), the rest rounds 15–19. Model says top Ks are worth a round earlier than the league pays.<br>
-  <b>Last year we (MDM)</b> took DSTs at 140/160 and our K at 181 — the model says that punted ~40+ pts of DST edge.</div></div>
+  <div class="card"><h2>2026: 16 rounds, no bench</h2><div class="note">
+  CBS has this year's draft at <b>16 rounds</b> — exactly the 2QB/4RB/4WR/2TE/2K/2DST lineup, zero stash picks. Every pick starts every week in Total Points. The 3 IR spots fill in-season, not at the draft.<br><br>
+  <b>We pick 3rd.</b> Our picks: #${myPickNumbers().slice(0, 6).join(", #")}…</div></div>
+  <div class="card"><h2>How the Lodge actually drafts (2023–25)</h2><div class="note">
+  <b>QBs fly:</b> 4–5 QBs inside the first 23 picks in all three drafts. QB6–10 go rounds 3–6.<br>
+  <b>DST window:</b> first DST went pick 74 (2023), 82 (2024), 69 (2025). In a 16-round draft expect the first around pick ~71 (R8) and the run rounds 8–11.<br>
+  <b>Kickers:</b> first K went 109 / 135 / 135 in 19-round drafts; with the stash rounds gone, expect the first around pick ~118 (R12) and the run rounds 12–16.<br>
+  <b>2025 us (MDM):</b> DSTs at 140/160, K at 181 — the model says that punted ~40+ pts of DST edge. Don't repeat it.</div></div>
   <div class="card"><h2>Draft plan (slot ${S.slot})</h2><div class="note">
-  R1–2 (#${myPickNumbers()[0]}, #${myPickNumbers()[1]}): elite RB volume — this scoring pays RB workhorses (100-yd bonuses, rush yds) and dings low-catch WRs.<br>
-  R3–5: best VORP on board; grab QB1 if a top-6 QB slides.<br>
-  R6–8: second QB + <b>first elite DST</b> right before the league's window (their first DST went pick 69).<br>
-  R9–12: DST2 during the run, TE value, RB/WR depth.<br>
-  R13–15: <b>K1 a round before the league moves (first K went 135)</b>, fill starters.<br>
-  R16–19: K2, upside stashes for the 3 IR spots — rookie RBs / injured stars, not 3rd QBs (they scored ~0 marginal pts last year).<br><br>
+  R1 (#${myPickNumbers()[0]}): JT / CMC tier — elite RB volume; this scoring pays workhorses (100-yd bonuses) and dings low-catch WRs.<br>
+  R2–3 (#${myPickNumbers()[1]}, #${myPickNumbers()[2]}): more RB or a top-6 QB if one slides — 4–5 QBs will be gone by our R3 pick if history holds.<br>
+  R4–6: QB1 at the latest, best VORP on board.<br>
+  R7–8: second QB + <b>first elite DST</b> just before the room's window (~pick 71).<br>
+  R9–11: DST2 during the run, TE value, RB/WR volume.<br>
+  R12–13: <b>K1 just before the room moves (~pick 118)</b>.<br>
+  R14–16: K2 + fill remaining starters — every slot scores weekly, so no dart throws that can't start.<br><br>
   Watch byes at K/DST: two same-bye DSTs = a guaranteed zero week in Total Points.</div></div>
   <div class="card"><h2>Under the hood</h2><div class="note">
-  Rankings = your dynasty-dashboard 2026 model, re-scored play-by-play under the CBS rules (tier bonuses from 2022-25 empirical curves), blended with the market (FFC 10-team 2QB ADP, 4,847 drafts + FantasyPros superflex ECR), VORP vs this league's replacement lines (QB21/RB41/WR41/TE21/K21/DST21). "% back next" uses league-tuned windows for K/DST, market ADP elsewhere.</div></div>`;
+  Rankings = your dynasty-dashboard 2026 model, re-scored play-by-play under the CBS rules (tier bonuses from 2022-25 empirical curves), VORP vs this league's replacement lines (QB21/RB41/WR41/TE21/K21/DST21). <b>Lodge ADP</b> = CBS non-PPR draft order (site ADP + Top 200 expert consensus, pulled 8/28) timed by this room's own 2023–25 positional pick curves, compressed to 16 rounds. Fox's and AJ's submitted ranks vote in Consensus alongside the model.</div></div>`;
 }
 
 // ---------- action sheet ----------
